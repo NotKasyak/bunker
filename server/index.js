@@ -2,12 +2,17 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { generatePlayerCard, professions, health, hobbies, phobias, baggage, facts } = require('./gameData');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React client app
+const clientPath = path.join(__dirname, '../client/build');
+app.use(express.static(clientPath));
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -459,6 +464,16 @@ io.on('connection', (socket) => {
       }
     }
   });
+});
+
+// All other GET requests not handled before will return the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
+
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 server.listen(PORT, () => {

@@ -1,18 +1,13 @@
-// This is a helper function to initialize the socket connection with Vercel
+// This is a helper function to initialize the socket connection with Railway
 import { io } from 'socket.io-client';
 
 export const initializeSocket = async () => {
   // If we're running on the client side
   if (typeof window !== 'undefined') {
-    // For Vercel deployment, we need to make a request to initialize the socket API
+    // For production deployment (Railway)
     if (process.env.NODE_ENV === 'production') {
-      // First, ping the API to ensure the socket server is initialized
-      await fetch('/api/socket');
-      
-      // Then create the socket connection
-      const socket = io({
-        path: '/socket.io',
-      });
+      // For Railway, we can connect directly to the root as the server handles Socket.IO
+      const socket = io(window.location.origin);
       
       return socket;
     } else {

@@ -1,0 +1,33 @@
+{
+  "services": [
+    {
+      "type": "web",
+      "name": "bunker-game-server",
+      "env": "node",
+      "buildCommand": "cd server && npm install",
+      "startCommand": "cd server && node index.js",
+      "envVars": [
+        {
+          "key": "NODE_ENV",
+          "value": "production"
+        }
+      ]
+    },
+    {
+      "type": "static_site",
+      "name": "bunker-game-client",
+      "buildCommand": "cd client && npm install && npm run build",
+      "publishDir": "client/build",
+      "envVars": [
+        {
+          "key": "REACT_APP_API_URL",
+          "fromService": {
+            "name": "bunker-game-server",
+            "type": "web",
+            "property": "url"
+          }
+        }
+      ]
+    }
+  ]
+}

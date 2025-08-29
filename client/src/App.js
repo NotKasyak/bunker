@@ -88,10 +88,8 @@ function App() {
   // Create a new game
   const createGame = async (playerCount, bunkerSpots, playerName) => {
     try {
-      // Adapt API endpoint for Vercel serverless function
-      const apiUrl = process.env.NODE_ENV === 'production'
-        ? '/api/create-game'
-        : `${SOCKET_SERVER_URL}/api/games`;
+      // For Railway, we can use the same endpoint for both production and development
+      const apiUrl = `${SOCKET_SERVER_URL}/api/games`;
         
       const response = await fetch(apiUrl, {
         method: 'POST',
