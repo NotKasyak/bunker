@@ -2,6 +2,15 @@ const { Server } = require('socket.io');
 const { getGame, addPlayer, updateGame } = require('./gameStore');
 
 module.exports = (req, res) => {
+  // For Vercel serverless functions, we need to handle CORS first
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    res.status(200).end();
+    return;
+  }
+  
   if (res.socket.server.io) {
     console.log('Socket is already running');
     res.end();
@@ -14,7 +23,8 @@ module.exports = (req, res) => {
     cors: {
       origin: '*',
       methods: ['GET', 'POST']
-    }
+    },
+    transports: ['polling', 'websocket']
   });
   res.socket.server.io = io;
 
